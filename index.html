@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Game Con Rắn khó Nhất hành tinh</title>
+    <title>Game Rắn Săn Mồi khó nhất hành tinh</title>
     <style>
         * {
             user-select: none;
@@ -161,6 +161,76 @@
             animation: shake 0.2s ease-in-out 0s 2;
         }
 
+        /* PHẦN HƯỚNG DẪN CÁCH CHƠI */
+        .instructions {
+            margin-top: 15px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .instructions details {
+            cursor: pointer;
+        }
+
+        .instructions summary {
+            padding: 12px 20px;
+            background: #2c5a2c;
+            color: #f2e8cf;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 20px;
+            list-style: none;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        .instructions summary:hover {
+            background: #3e7a3e;
+        }
+
+        .instructions summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .instructions-content {
+            padding: 15px 20px;
+            background: #0a2a1a;
+            color: #e9f5db;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .instructions-content h3 {
+            color: #f9e45b;
+            margin: 10px 0 8px 0;
+            font-size: 0.95rem;
+        }
+
+        .instructions-content h3:first-child {
+            margin-top: 0;
+        }
+
+        .instructions-content p {
+            margin: 5px 0;
+        }
+
+        .instructions-content kbd {
+            background: #2c2c2c;
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-family: monospace;
+            font-weight: bold;
+            color: #f9e45b;
+            margin: 0 2px;
+            display: inline-block;
+        }
+
+        .instructions-content .highlight {
+            color: #ffaa66;
+            font-weight: bold;
+        }
+
         @media (max-width: 600px) {
             .score-value, .best-value, .timer-value, .enemy-timer-value {
                 font-size: 1.2rem;
@@ -172,6 +242,10 @@
             .arrow-btn {
                 padding: 6px 14px;
                 font-size: 1.3rem;
+            }
+            .instructions-content {
+                font-size: 0.75rem;
+                padding: 12px 15px;
             }
         }
 
@@ -200,7 +274,7 @@
 <body>
 <div>
     <div class="game-container">
-        <canvas id="gameCanvas" width="900" height="900"></canvas>
+        <canvas id="gameCanvas" width="700" height="700"></canvas>
 
         <div class="info-panel">
             <div class="score-box">🍎 ĐIỂM <span class="score-value" id="scoreDisplay">0</span></div>
@@ -211,20 +285,59 @@
 
         <div style="display: flex; justify-content: center; flex-direction: column; align-items: center;">
             <div class="status" id="statusText">🐍 CHỌN CHẾ ĐỘ BÊN DƯỚI</div>
-            <div class="mode-indicator" id="modeIndicator">⚡ CHẾ ĐỘ: <span id="currentModeLabel">DỄ (XUYÊN TƯỜNG)</span> ⚡</div>
+            <div class="mode-indicator" id="modeIndicator">⚡ CHẾ ĐỘ: <span id="currentModeLabel">NGƯỜI BÌNH THƯỜNG</span> ⚡</div>
         </div>
 
         <div class="mode-buttons">
-            <button id="easyModeBtn" class="mode-btn mode-active">🍃 Người Bình Thường</button>
-            <button id="hardModeBtn" class="mode-btn">🔥 Châu Á</button>
+            <button id="easyModeBtn" class="mode-btn mode-active">🍃 NGƯỜI BÌNH THƯỜNG</button>
+            <button id="hardModeBtn" class="mode-btn">🔥 NGƯỜI CHÂU Á</button>
         </div>
 
         <div class="controls">
             <button id="restartButton" class="restart-btn">⟳ CHƠI LẠI</button>
         </div>
 
+        <!-- PHẦN HƯỚNG DẪN CÁCH CHƠI -->
+        <div class="instructions">
+            <details>
+                <summary>📖 HƯỚNG DẪN CÁCH CHƠI (Bấm vào đây)</summary>
+                <div class="instructions-content">
+                    <h3>🎮 CÁCH ĐIỀU KHIỂN:</h3>
+                    <p>▶️ <strong>Bàn phím:</strong> Dùng phím <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> hoặc <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></p>
+                    <h3>🍎 LUẬT CHƠI CƠ BẢN:</h3>
+                    <p>• Ăn táo <span style="font-size:1.2rem">🍎</span> để tăng điểm và độ dài rắn</p>
+                    <p>• Tránh đâm vào <span class="highlight">thân của chính mình</span> (nếu đâm vào là chết)</p>
+                    <p>• 💣 <strong>Bom:</strong> Xuất hiện mỗi 10 giây, nổ sau 5 giây, bán kính <strong>3x3 ô</strong></p>
+                    <p>• Đụng bom (chưa nổ hoặc đã nổ) là <span style="color:#ff5555">CHẾT NGAY</span>!</p>
+                    <p>• Bom nổ có hiệu ứng đẹp và rung màn hình 💥</p>
+                    
+                    <h3>🍃 CHẾ ĐỘ NGƯỜI BÌNH THƯỜNG (mặc định):</h3>
+                    <p>• ✅ <strong>Xuyên tường:</strong> Đi ra mép này, xuất hiện ở mép đối diện</p>
+                    <p>• ✅ Không có rắn đuổi</p>
+                    <p>• ✅ Dễ dàng làm quen với game</p>
+                    
+                    <h3>🔥 CHẾ ĐỘ NGƯỜI CHÂU Á (bấm nút "NGƯỜI CHÂU Á"):</h3>
+                    <p>• ❌ <strong>Đụng tường = CHẾT</strong> (cẩn thận!)</p>
+                    <p>• 🐍 <strong>Rắn đuổi:</strong> Xuất hiện mỗi 30 giây, tồn tại 5 giây</p>
+                    <p>• 🐢 Rắn đuổi di chuyển <strong>CHẬM</strong> (0.5 giây/bước) - dễ né!</p>
+                    <p>• 💡 <strong>Mẹo:</strong> Dùng bom nổ để <strong>tiêu diệt rắn đuổi</strong> 💥</p>
+                    
+                    <h3>🏆 CÁCH ĐỂ THẮNG:</h3>
+                    <p>• Lấp đầy toàn bộ bảng 20x20 = <strong>400 ô</strong></p>
+                    <p>• Đạt điểm tối đa: <strong>399 điểm</strong> (bắt đầu với 3 ô)</p>
+                    <p>• Khi thắng sẽ xuất hiện dòng chữ <strong style="color:#ffd966">"VICTORY!"</strong> 🏆</p>
+                    
+                    <h3>💡 MẸO CHƠI HAY:</h3>
+                    <p>• Luôn giữ khoảng trống xung quanh đầu rắn để tránh tự đâm</p>
+                    <p>• Theo dõi đồng hồ đếm ngược để biết khi nào bom/rắn đuổi xuất hiện</p>
+                    <p>• Ở chế độ khó, khi rắn đuổi xuất hiện, hãy chạy về phía bom sắp nổ</p>
+                    <p>• Bom nổ có thể tiêu diệt rắn đuổi, tận dụng điều này!</p>
+                    <p>• Khi rắn dài, hãy di chuyển theo vòng xoắn ốc để dễ quản lý</p>
+                </div>
+            </details>
         </div>
-        <footer>Hãy sống sót tốt nhé</footer>
+
+        <footer>💣 HÃY SỐNG SÓT THẬT CẨN THẬN | 📖 Bấm vào hướng dẫn để xem chi tiết</footer>
     </div>
 </div>
 
@@ -257,7 +370,7 @@
         let gameLoopId = null;
         let bombTimerId = null;
         let enemyTimerId = null;
-        let enemyMoveIntervalId = null; // Timer riêng cho di chuyển rắn đuổi
+        let enemyMoveIntervalId = null;
         let isGameRunning = true;
         let gameSpeed = 120;
         
@@ -267,11 +380,8 @@
         let enemyCountdown = 30;
         let enemyActive = false;
         
-        // Hiệu ứng nổ
         let explosions = [];
-        
-        // Tốc độ rắn đuổi (giảm xuống 500ms = 0.5 giây di chuyển 1 lần)
-        const ENEMY_MOVE_DELAY = 500; // 500ms = chậm hơn nhiều so với rắn chính (120ms)
+        const ENEMY_MOVE_DELAY = 500;
         
         function loadBestScore() {
             const key = isEasyMode ? 'snakeBestScoreEasy' : 'snakeBestScoreHard';
@@ -483,7 +593,6 @@
             return false;
         }
         
-        // Di chuyển rắn đuổi CHẬM hơn
         function moveEnemySnake() {
             if(!enemyActive || !enemySnake || isEasyMode || !isGameRunning) return;
             
@@ -494,7 +603,6 @@
             let newX = enemySnake.x;
             let newY = enemySnake.y;
             
-            // Di chuyển theo hướng ưu tiên (vẫn đuổi nhưng chậm)
             if(Math.abs(dx) > Math.abs(dy)) {
                 if(dx > 0) newX++;
                 else newX--;
@@ -509,7 +617,6 @@
             enemySnake.x = newX;
             enemySnake.y = newY;
             
-            // Kiểm tra va chạm sau khi di chuyển
             if(enemySnake.x === head.x && enemySnake.y === head.y) {
                 setStatus("🐍 BỊ RẮN ĐUỔI TẤN CÔNG! GAME OVER! 🐍", true);
                 gameOver();
@@ -559,7 +666,6 @@
                     }
                 }, 100);
                 
-                // Rắn đuổi biến mất sau 5s
                 setTimeout(() => {
                     if(isGameRunning && !isEasyMode && enemyActive) {
                         enemyActive = false;
@@ -628,7 +734,7 @@
             if(bombTimerId) clearInterval(bombTimerId);
             if(enemyTimerId) clearInterval(enemyTimerId);
             if(enemyMoveIntervalId) clearInterval(enemyMoveIntervalId);
-            setStatus("BẠN CHƠI GÀ QUÁ TRẺ CON CÒN GIỎI HƠN BẠN", true);
+            setStatus("💀 GAME OVER 💀 - Nhấn CHƠI LẠI", true);
             shakeScreen();
         }
         
@@ -855,7 +961,6 @@
                 ctx.fillStyle = '#ffaa66';
                 ctx.font = `bold ${CELL_SIZE * 0.65}px monospace`;
                 ctx.fillText("🐍", ex + CELL_SIZE/2, ey + CELL_SIZE/2 + 5);
-                // Thêm hiệu ứng chậm
                 ctx.fillStyle = '#ffff00';
                 ctx.font = `${CELL_SIZE * 0.25}px monospace`;
                 ctx.fillText("🐢", ex + CELL_SIZE - 8, ey + 6);
@@ -869,7 +974,7 @@
             ctx.fill();
             ctx.fillStyle = '#ffeeaa';
             ctx.font = `${CELL_SIZE * 0.6}px monospace`;
-            ctx.fillText("🍎", fx + CELL_SIZE/2 - 17, fy + CELL_SIZE/2 + 6);
+            ctx.fillText("🍎", fx + CELL_SIZE/2 - 7, fy + CELL_SIZE/2 + 6);
             
             for(let i=0; i<snake.length; i++) {
                 const seg = snake[i];
