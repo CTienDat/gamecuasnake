@@ -231,6 +231,129 @@
             font-weight: bold;
         }
 
+        /* MENU BẮT ĐẦU */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .menu-container {
+            background: linear-gradient(135deg, #0a2a1a, #0a1f12);
+            border-radius: 60px;
+            padding: 40px 50px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            border: 3px solid #f9e45b;
+            max-width: 500px;
+            width: 90%;
+            animation: menuFadeIn 0.4s ease;
+        }
+
+        @keyframes menuFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .menu-container h1 {
+            font-size: 2.8rem;
+            color: #f9e45b;
+            text-shadow: 0 5px 0 #5a3e00;
+            margin-bottom: 10px;
+        }
+
+        .menu-container .subtitle {
+            color: #b9d8b3;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        .menu-stats {
+            background: #00000066;
+            border-radius: 30px;
+            padding: 15px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .menu-stat {
+            text-align: center;
+        }
+
+        .menu-stat .label {
+            font-size: 0.8rem;
+            color: #c7f0b8;
+        }
+
+        .menu-stat .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #f9e45b;
+        }
+
+        .menu-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        .menu-btn {
+            background: #2c5a2c;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 12px 28px;
+            border-radius: 60px;
+            color: #f2e8cf;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 5px 0 #1a3a1a;
+        }
+
+        .menu-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .menu-btn:active {
+            transform: translateY(2px);
+        }
+
+        .menu-btn.primary {
+            background: #f9b81b;
+            color: #2c2c2c;
+            box-shadow: 0 5px 0 #b87c10;
+            font-size: 1.4rem;
+            padding: 14px 35px;
+        }
+
+        .menu-btn.selected {
+            background: #f9b81b;
+            color: #2c2c2c;
+            box-shadow: 0 5px 0 #b87c10;
+        }
+
+        .menu-btn.hard {
+            background: #b1624b;
+            box-shadow: 0 5px 0 #6e3a2a;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
         @media (max-width: 600px) {
             .score-value, .best-value, .timer-value, .enemy-timer-value {
                 font-size: 1.2rem;
@@ -246,6 +369,16 @@
             .instructions-content {
                 font-size: 0.75rem;
                 padding: 12px 15px;
+            }
+            .menu-container {
+                padding: 25px 20px;
+            }
+            .menu-container h1 {
+                font-size: 2rem;
+            }
+            .menu-btn {
+                padding: 8px 18px;
+                font-size: 1rem;
             }
         }
 
@@ -272,73 +405,106 @@
     </style>
 </head>
 <body>
-<div>
-    <div class="game-container">
-        <canvas id="gameCanvas" width="700" height="700"></canvas>
 
-        <div class="info-panel">
-            <div class="score-box">🍎 ĐIỂM <span class="score-value" id="scoreDisplay">0</span></div>
-            <div class="timer-box">💣 BOM TIẾP <span class="timer-value" id="timerDisplay">10</span>s</div>
-            <div class="enemy-timer-box" id="enemyTimerBox">🐍 RẮN ĐUỔI <span class="enemy-timer-value" id="enemyTimerDisplay">30</span>s</div>
-            <div class="best-box">🏆 CAO NHẤT <span class="best-value" id="bestDisplay">0</span></div>
+<!-- MENU BẮT ĐẦU -->
+<div id="menuOverlay" class="menu-overlay">
+    <div class="menu-container">
+        <h1>🐍 SNAKE GAME</h1>
+        <div class="subtitle">Rắn săn mồi - Phiên bản khó nhất hành tinh</div>
+        
+        <div class="menu-stats">
+            <div class="menu-stat">
+                <div class="label">🏆 CAO NHẤT (Dễ)</div>
+                <div class="value" id="menuBestEasy">0</div>
+            </div>
+            <div class="menu-stat">
+                <div class="label">🔥 CAO NHẤT (Khó)</div>
+                <div class="value" id="menuBestHard">0</div>
+            </div>
         </div>
-
-        <div style="display: flex; justify-content: center; flex-direction: column; align-items: center;">
-            <div class="status" id="statusText">🐍 CHỌN CHẾ ĐỘ BÊN DƯỚI</div>
-            <div class="mode-indicator" id="modeIndicator">⚡ CHẾ ĐỘ: <span id="currentModeLabel">NGƯỜI BÌNH THƯỜNG</span> ⚡</div>
+        
+        <div class="menu-buttons">
+            <button id="menuEasyBtn" class="menu-btn selected">🍃 NGƯỜI BÌNH THƯỜNG</button>
+            <button id="menuHardBtn" class="menu-btn hard">🔥 NGƯỜI CHÂU Á</button>
         </div>
-
-        <div class="mode-buttons">
-            <button id="easyModeBtn" class="mode-btn mode-active">🍃 NGƯỜI BÌNH THƯỜNG</button>
-            <button id="hardModeBtn" class="mode-btn">🔥 NGƯỜI CHÂU Á</button>
-        </div>
-
-        <div class="controls">
-            <button id="restartButton" class="restart-btn">⟳ CHƠI LẠI</button>
-        </div>
-
-        <!-- PHẦN HƯỚNG DẪN CÁCH CHƠI -->
-        <div class="instructions">
-            <details>
-                <summary>📖 HƯỚNG DẪN CÁCH CHƠI (Bấm vào đây)</summary>
-                <div class="instructions-content">
-                    <h3>🎮 CÁCH ĐIỀU KHIỂN:</h3>
-                    <p>▶️ <strong>Bàn phím:</strong> Dùng phím <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> hoặc <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></p>
-                    <h3>🍎 LUẬT CHƠI CƠ BẢN:</h3>
-                    <p>• Ăn táo <span style="font-size:1.2rem">🍎</span> để tăng điểm và độ dài rắn</p>
-                    <p>• Tránh đâm vào <span class="highlight">thân của chính mình</span> (nếu đâm vào là chết)</p>
-                    <p>• 💣 <strong>Bom:</strong> Xuất hiện mỗi 10 giây, nổ sau 5 giây, bán kính <strong>3x3 ô</strong></p>
-                    <p>• Đụng bom (chưa nổ hoặc đã nổ) là <span style="color:#ff5555">CHẾT NGAY</span>!</p>
-                    <p>• Bom nổ có hiệu ứng đẹp và rung màn hình 💥</p>
-                    
-                    <h3>🍃 CHẾ ĐỘ NGƯỜI BÌNH THƯỜNG (mặc định):</h3>
-                    <p>• ✅ <strong>Xuyên tường:</strong> Đi ra mép này, xuất hiện ở mép đối diện</p>
-                    <p>• ✅ Không có rắn đuổi</p>
-                    <p>• ✅ Dễ dàng làm quen với game</p>
-                    
-                    <h3>🔥 CHẾ ĐỘ NGƯỜI CHÂU Á (bấm nút "NGƯỜI CHÂU Á"):</h3>
-                    <p>• ❌ <strong>Đụng tường = CHẾT</strong> (cẩn thận!)</p>
-                    <p>• 🐍 <strong>Rắn đuổi:</strong> Xuất hiện mỗi 30 giây, tồn tại 5 giây</p>
-                    <p>• 🐢 Rắn đuổi di chuyển <strong>CHẬM</strong> (0.5 giây/bước) - dễ né!</p>
-                    <p>• 💡 <strong>Mẹo:</strong> Dùng bom nổ để <strong>tiêu diệt rắn đuổi</strong> 💥</p>
-                    
-                    <h3>🏆 CÁCH ĐỂ THẮNG:</h3>
-                    <p>• Lấp đầy toàn bộ bảng 20x20 = <strong>400 ô</strong></p>
-                    <p>• Đạt điểm tối đa: <strong>399 điểm</strong> (bắt đầu với 3 ô)</p>
-                    <p>• Khi thắng sẽ xuất hiện dòng chữ <strong style="color:#ffd966">"VICTORY!"</strong> 🏆</p>
-                    
-                    <h3>💡 MẸO CHƠI HAY:</h3>
-                    <p>• Luôn giữ khoảng trống xung quanh đầu rắn để tránh tự đâm</p>
-                    <p>• Theo dõi đồng hồ đếm ngược để biết khi nào bom/rắn đuổi xuất hiện</p>
-                    <p>• Ở chế độ khó, khi rắn đuổi xuất hiện, hãy chạy về phía bom sắp nổ</p>
-                    <p>• Bom nổ có thể tiêu diệt rắn đuổi, tận dụng điều này!</p>
-                    <p>• Khi rắn dài, hãy di chuyển theo vòng xoắn ốc để dễ quản lý</p>
-                </div>
-            </details>
-        </div>
-
-        <footer>💣 HÃY SỐNG SÓT THẬT CẨN THẬN | 📖 Bấm vào hướng dẫn để xem chi tiết</footer>
+        
+        <button id="startGameBtn" class="menu-btn primary">🎮 BẮT ĐẦU</button>
     </div>
+</div>
+
+<div class="game-container" style="display: none;">
+    <canvas id="gameCanvas" width="700" height="700"></canvas>
+
+    <div class="info-panel">
+        <div class="score-box">🍎 ĐIỂM <span class="score-value" id="scoreDisplay">0</span></div>
+        <div class="timer-box">💣 BOM TIẾP <span class="timer-value" id="timerDisplay">10</span>s</div>
+        <div class="enemy-timer-box" id="enemyTimerBox">🐍 RẮN ĐUỔI <span class="enemy-timer-value" id="enemyTimerDisplay">30</span>s</div>
+        <div class="best-box">🏆 CAO NHẤT <span class="best-value" id="bestDisplay">0</span></div>
+    </div>
+
+    <div style="display: flex; justify-content: center; flex-direction: column; align-items: center;">
+        <div class="status" id="statusText">🐍 CHỌN CHẾ ĐỘ BÊN DƯỚI</div>
+        <div class="mode-indicator" id="modeIndicator">⚡ CHẾ ĐỘ: <span id="currentModeLabel">NGƯỜI BÌNH THƯỜNG</span> ⚡</div>
+    </div>
+
+    <div class="mode-buttons">
+        <button id="easyModeBtn" class="mode-btn mode-active">🍃 NGƯỜI BÌNH THƯỜNG</button>
+        <button id="hardModeBtn" class="mode-btn">🔥 NGƯỜI CHÂU Á</button>
+    </div>
+
+    <div class="controls">
+        <button id="restartButton" class="restart-btn">⟳ CHƠI LẠI</button>
+        <button id="menuButton" class="restart-btn" style="background: #2c5a2c;">🏠 MENU</button>
+    </div>
+
+    <div class="mobile-arrows" id="mobileControls">
+        <button class="arrow-btn" data-dir="up">▲</button>
+        <button class="arrow-btn" data-dir="left">◀</button>
+        <button class="arrow-btn" data-dir="down">▼</button>
+        <button class="arrow-btn" data-dir="right">▶</button>
+    </div>
+
+    <!-- PHẦN HƯỚNG DẪN CÁCH CHƠI -->
+    <div class="instructions">
+        <details>
+            <summary>📖 HƯỚNG DẪN CÁCH CHƠI (Bấm vào đây)</summary>
+            <div class="instructions-content">
+                <h3>🎮 CÁCH ĐIỀU KHIỂN:</h3>
+                <p>▶️ <strong>Bàn phím:</strong> Dùng phím <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> hoặc <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></p>
+                <h3>🍎 LUẬT CHƠI CƠ BẢN:</h3>
+                <p>• Ăn táo <span style="font-size:1.2rem">🍎</span> để tăng điểm và độ dài rắn</p>
+                <p>• Tránh đâm vào <span class="highlight">thân của chính mình</span> (nếu đâm vào là chết)</p>
+                <p>• 💣 <strong>Bom:</strong> Xuất hiện mỗi 10 giây, nổ sau 5 giây, bán kính <strong>3x3 ô</strong></p>
+                <p>• Đụng bom (chưa nổ hoặc đã nổ) là <span style="color:#ff5555">CHẾT NGAY</span>!</p>
+                <p>• Bom nổ có hiệu ứng đẹp và rung màn hình 💥</p>
+                
+                <h3>🍃 CHẾ ĐỘ NGƯỜI BÌNH THƯỜNG (mặc định):</h3>
+                <p>• ✅ <strong>Xuyên tường:</strong> Đi ra mép này, xuất hiện ở mép đối diện</p>
+                <p>• ✅ Không có rắn đuổi</p>
+                <p>• ✅ Dễ dàng làm quen với game</p>
+                
+                <h3>🔥 CHẾ ĐỘ NGƯỜI CHÂU Á (bấm nút "NGƯỜI CHÂU Á"):</h3>
+                <p>• ❌ <strong>Đụng tường = CHẾT</strong> (cẩn thận!)</p>
+                <p>• 🐍 <strong>Rắn đuổi:</strong> Xuất hiện mỗi 30 giây, tồn tại 5 giây</p>
+                <p>• 🐢 Rắn đuổi di chuyển <strong>CHẬM</strong> (0.5 giây/bước) - dễ né!</p>
+                <p>• 💡 <strong>Mẹo:</strong> Dùng bom nổ để <strong>tiêu diệt rắn đuổi</strong> 💥</p>
+                
+                <h3>🏆 CÁCH ĐỂ THẮNG:</h3>
+                <p>• Lấp đầy toàn bộ bảng 20x20 = <strong>400 ô</strong></p>
+                <p>• Đạt điểm tối đa: <strong>399 điểm</strong> (bắt đầu với 3 ô)</p>
+                <p>• Khi thắng sẽ xuất hiện dòng chữ <strong style="color:#ffd966">"VICTORY!"</strong> 🏆</p>
+                
+                <h3>💡 MẸO CHƠI HAY:</h3>
+                <p>• Luôn giữ khoảng trống xung quanh đầu rắn để tránh tự đâm</p>
+                <p>• Theo dõi đồng hồ đếm ngược để biết khi nào bom/rắn đuổi xuất hiện</p>
+                <p>• Ở chế độ khó, khi rắn đuổi xuất hiện, hãy chạy về phía bom sắp nổ</p>
+                <p>• Bom nổ có thể tiêu diệt rắn đuổi, tận dụng điều này!</p>
+                <p>• Khi rắn dài, hãy di chuyển theo vòng xoắn ốc để dễ quản lý</p>
+            </div>
+        </details>
+    </div>
+
+    <footer>💣 HÃY SỐNG SÓT THẬT CẨN THẬN | 📖 Bấm vào hướng dẫn để xem chi tiết</footer>
 </div>
 
 <script>
@@ -395,6 +561,7 @@
         function saveBestScore() {
             const key = isEasyMode ? 'snakeBestScoreEasy' : 'snakeBestScoreHard';
             try { localStorage.setItem(key, bestScore); } catch(e) {}
+            updateMenuScores();
         }
         
         function updateScoreUI() {
@@ -1121,9 +1288,81 @@
             }
         }
         
-        window.addEventListener('load', () => {
+        // ========== MENU BẮT ĐẦU ==========
+        const menuOverlay = document.getElementById('menuOverlay');
+        const gameContainer = document.querySelector('.game-container');
+        const menuEasy = document.getElementById('menuEasyBtn');
+        const menuHard = document.getElementById('menuHardBtn');
+        const startBtn = document.getElementById('startGameBtn');
+        const menuBtn = document.getElementById('menuButton');
+        const menuBestEasySpan = document.getElementById('menuBestEasy');
+        const menuBestHardSpan = document.getElementById('menuBestHard');
+        
+        function updateMenuScores() {
+            try {
+                const bestEasy = localStorage.getItem('snakeBestScoreEasy');
+                const bestHard = localStorage.getItem('snakeBestScoreHard');
+                menuBestEasySpan.innerText = bestEasy && !isNaN(parseInt(bestEasy)) ? bestEasy : '0';
+                menuBestHardSpan.innerText = bestHard && !isNaN(parseInt(bestHard)) ? bestHard : '0';
+            } catch(e) {}
+        }
+        
+        function startGameFromMenu() {
+            const isEasySelected = menuEasy.classList.contains('selected');
+            
+            if(isEasySelected) {
+                if(!isEasyMode) {
+                    isEasyMode = true;
+                    easyModeBtn.classList.add('mode-active');
+                    hardModeBtn.classList.remove('mode-active');
+                    enemyTimerBox.style.display = 'none';
+                    currentModeLabel.innerHTML = " Dễ 🍃";
+                    setStatus("🐍 CHẾ ĐỘ DỄ: HỌC SINH CÒN CHƠI ĐƯỢC");
+                }
+            } else {
+                if(isEasyMode) {
+                    isEasyMode = false;
+                    hardModeBtn.classList.add('mode-active');
+                    easyModeBtn.classList.remove('mode-active');
+                    enemyTimerBox.style.display = 'flex';
+                    currentModeLabel.innerHTML = "KHÓ🔥";
+                    setStatus("🔥 CHẾ ĐỘ NGƯỜI CHÂU Á VỪA KHÓ VỪA ĐAU");
+                }
+            }
+            
             loadBestScore();
             resetGame();
+            menuOverlay.style.display = 'none';
+            gameContainer.style.display = 'block';
+        }
+        
+        function backToMenu() {
+            if(gameLoopId) clearInterval(gameLoopId);
+            if(bombTimerId) clearInterval(bombTimerId);
+            if(enemyTimerId) clearInterval(enemyTimerId);
+            if(enemyMoveIntervalId) clearInterval(enemyMoveIntervalId);
+            updateMenuScores();
+            menuOverlay.style.display = 'flex';
+            gameContainer.style.display = 'none';
+        }
+        
+        menuEasy.addEventListener('click', () => {
+            menuEasy.classList.add('selected');
+            menuHard.classList.remove('selected');
+        });
+        
+        menuHard.addEventListener('click', () => {
+            menuHard.classList.add('selected');
+            menuEasy.classList.remove('selected');
+        });
+        
+        startBtn.addEventListener('click', startGameFromMenu);
+        if(menuBtn) menuBtn.addEventListener('click', backToMenu);
+        
+        updateMenuScores();
+        
+        window.addEventListener('load', () => {
+            loadBestScore();
             setupMobileControls();
             window.addEventListener('keydown', handleKey);
             document.getElementById('restartButton').addEventListener('click', () => resetGame());
