@@ -2,12 +2,13 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Game Rắn Săn Mồi khó nhất hành tinh</title>
     <style>
         * {
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
         }
 
         body {
@@ -26,6 +27,13 @@
             border-radius: 48px;
             padding: 20px 25px 25px 25px;
             box-shadow: 0 20px 35px rgba(0,0,0,0.4);
+            position: relative;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
         }
 
         canvas {
@@ -35,17 +43,24 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             background-color: #1e3a2f;
             cursor: pointer;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+
+        /* Mặc định cho PC - canvas to */
+        canvas {
+            width: 700px;
+            height: 700px;
         }
 
         .info-panel {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             margin-top: 18px;
             margin-bottom: 12px;
             gap: 15px;
             flex-wrap: wrap;
-            justify-content: center;
         }
 
         .score-box, .best-box, .timer-box, .enemy-timer-box {
@@ -138,19 +153,6 @@
             color: #e9f5db;
         }
 
-        .mobile-arrows {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 18px;
-        }
-
-        .arrow-btn {
-            background: #2c3e2bdd;
-            font-size: 1.8rem;
-            padding: 8px 20px;
-        }
-
         @keyframes shake {
             0%, 100% { transform: translate(0, 0); }
             25% { transform: translate(-5px, 5px); }
@@ -161,7 +163,6 @@
             animation: shake 0.2s ease-in-out 0s 2;
         }
 
-        /* PHẦN HƯỚNG DẪN CÁCH CHƠI */
         .instructions {
             margin-top: 15px;
             border-radius: 20px;
@@ -207,10 +208,6 @@
             font-size: 0.95rem;
         }
 
-        .instructions-content h3:first-child {
-            margin-top: 0;
-        }
-
         .instructions-content p {
             margin: 5px 0;
         }
@@ -226,12 +223,6 @@
             display: inline-block;
         }
 
-        .instructions-content .highlight {
-            color: #ffaa66;
-            font-weight: bold;
-        }
-
-        /* MENU BẮT ĐẦU */
         .menu-overlay {
             position: fixed;
             top: 0;
@@ -354,41 +345,83 @@
             display: none !important;
         }
 
-        @media (max-width: 600px) {
-            .score-value, .best-value, .timer-value, .enemy-timer-value {
-                font-size: 1.2rem;
-            }
-            button {
-                padding: 6px 14px;
-                font-size: 1rem;
-            }
-            .arrow-btn {
-                padding: 6px 14px;
-                font-size: 1.3rem;
-            }
-            .instructions-content {
-                font-size: 0.75rem;
-                padding: 12px 15px;
-            }
-            .menu-container {
-                padding: 25px 20px;
-            }
-            .menu-container h1 {
-                font-size: 2rem;
-            }
-            .menu-btn {
-                padding: 8px 18px;
-                font-size: 1rem;
-            }
+        .gameover-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
 
-        footer {
-            font-size: 0.65rem;
-            text-align: center;
-            margin-top: 16px;
-            color: #b9d8b3;
+        .gameover-overlay.show {
+            opacity: 1;
+            visibility: visible;
         }
-        
+
+        .gameover-text {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ff5555;
+            text-shadow: 0 5px 0 #8b0000;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .gameover-score {
+            font-size: 1.5rem;
+            color: #ffaa66;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .gameover-restart-btn {
+            background: #f9b81b;
+            color: #2c2c2c;
+            font-size: 1.5rem;
+            padding: 12px 35px;
+            border-radius: 60px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 0 #b87c10;
+            transition: 0.05s linear;
+        }
+
+        .gameover-restart-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #b87c10;
+        }
+
+        .gameover-tip {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #b9d8b3;
+            text-align: center;
+        }
+
+        .mobile-control-notice {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.75rem;
+            color: #b9d8b3;
+            background: #00000066;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            width: auto;
+        }
+
         .mode-buttons {
             display: flex;
             gap: 12px;
@@ -402,6 +435,92 @@
             font-size: 0.8rem;
             font-weight: bold;
         }
+
+        footer {
+            font-size: 0.65rem;
+            text-align: center;
+            margin-top: 16px;
+            color: #b9d8b3;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .game-container {
+                padding: 12px 15px 15px 15px;
+                border-radius: 32px;
+            }
+            
+            canvas {
+                width: 95vw;
+                height: 95vw;
+                max-width: 450px;
+                max-height: 450px;
+            }
+            
+            .score-box, .best-box, .timer-box, .enemy-timer-box {
+                padding: 4px 10px;
+            }
+            
+            .score-box span, .best-box span, .timer-box span, .enemy-timer-box span {
+                font-size: 0.7rem;
+            }
+            
+            .score-value, .best-value, .timer-value, .enemy-timer-value {
+                font-size: 1.1rem;
+            }
+            
+            button {
+                font-size: 0.9rem;
+                padding: 5px 14px;
+            }
+            
+            .mode-btn {
+                font-size: 0.85rem;
+                padding: 5px 12px;
+            }
+            
+            .status {
+                font-size: 0.75rem;
+                padding: 4px 12px;
+            }
+            
+            .instructions summary {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+            
+            .instructions-content {
+                padding: 10px 15px;
+                font-size: 0.7rem;
+            }
+            
+            .gameover-text {
+                font-size: 1.8rem;
+            }
+            
+            .gameover-score {
+                font-size: 1rem;
+            }
+            
+            .gameover-restart-btn {
+                font-size: 1.1rem;
+                padding: 8px 25px;
+            }
+            
+            .mobile-control-notice {
+                font-size: 0.6rem;
+                padding: 3px 10px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-control-notice {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -414,11 +533,11 @@
         
         <div class="menu-stats">
             <div class="menu-stat">
-                <div class="label">🏆 CAO NHẤT (Dễ)</div>
+                <div class="label">🏆 CAO NHẤT (Người Bình Thường)</div>
                 <div class="value" id="menuBestEasy">0</div>
             </div>
             <div class="menu-stat">
-                <div class="label">🔥 CAO NHẤT (Khó)</div>
+                <div class="label">🔥 CAO NHẤT (Người Châu Á)</div>
                 <div class="value" id="menuBestHard">0</div>
             </div>
         </div>
@@ -433,7 +552,15 @@
 </div>
 
 <div class="game-container" style="display: none;">
-    <canvas id="gameCanvas" width="700" height="700"></canvas>
+    <div class="canvas-wrapper">
+        <canvas id="gameCanvas" width="700" height="700"></canvas>
+        <div id="gameoverOverlay" class="gameover-overlay">
+            <div class="gameover-text">💀 GAME OVER 💀</div>
+            <div class="gameover-score" id="gameoverScore">Điểm của bạn: 0</div>
+            <button id="gameoverRestartBtn" class="gameover-restart-btn">⟳ CHƠI LẠI</button>
+            <div class="gameover-tip">💡 Bấm CHƠI LẠI để bắt đầu ván mới</div>
+        </div>
+    </div>
 
     <div class="info-panel">
         <div class="score-box">🍎 ĐIỂM <span class="score-value" id="scoreDisplay">0</span></div>
@@ -457,54 +584,35 @@
         <button id="menuButton" class="restart-btn" style="background: #2c5a2c;">🏠 MENU</button>
     </div>
 
-    <div class="mobile-arrows" id="mobileControls">
-        <button class="arrow-btn" data-dir="up">▲</button>
-        <button class="arrow-btn" data-dir="left">◀</button>
-        <button class="arrow-btn" data-dir="down">▼</button>
-        <button class="arrow-btn" data-dir="right">▶</button>
+    <div class="mobile-control-notice">
+        📱 Vuốt TRỰC TIẾP trên màn hình để điều khiển rắn
     </div>
 
-    <!-- PHẦN HƯỚNG DẪN CÁCH CHƠI -->
     <div class="instructions">
         <details>
             <summary>📖 HƯỚNG DẪN CÁCH CHƠI (Bấm vào đây)</summary>
             <div class="instructions-content">
                 <h3>🎮 CÁCH ĐIỀU KHIỂN:</h3>
                 <p>▶️ <strong>Bàn phím:</strong> Dùng phím <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> hoặc <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></p>
+                <p>📱 <strong>Điện thoại:</strong> Vuốt trực tiếp trên màn hình game</p>
                 <h3>🍎 LUẬT CHƠI CƠ BẢN:</h3>
-                <p>• Ăn táo <span style="font-size:1.2rem">🍎</span> để tăng điểm và độ dài rắn</p>
-                <p>• Tránh đâm vào <span class="highlight">thân của chính mình</span> (nếu đâm vào là chết)</p>
-                <p>• 💣 <strong>Bom:</strong> Xuất hiện mỗi 10 giây, nổ sau 5 giây, bán kính <strong>3x3 ô</strong></p>
-                <p>• Đụng bom (chưa nổ hoặc đã nổ) là <span style="color:#ff5555">CHẾT NGAY</span>!</p>
-                <p>• Bom nổ có hiệu ứng đẹp và rung màn hình 💥</p>
-                
-                <h3>🍃 CHẾ ĐỘ NGƯỜI BÌNH THƯỜNG (mặc định):</h3>
-                <p>• ✅ <strong>Xuyên tường:</strong> Đi ra mép này, xuất hiện ở mép đối diện</p>
-                <p>• ✅ Không có rắn đuổi</p>
-                <p>• ✅ Dễ dàng làm quen với game</p>
-                
-                <h3>🔥 CHẾ ĐỘ NGƯỜI CHÂU Á (bấm nút "NGƯỜI CHÂU Á"):</h3>
-                <p>• ❌ <strong>Đụng tường = CHẾT</strong> (cẩn thận!)</p>
-                <p>• 🐍 <strong>Rắn đuổi:</strong> Xuất hiện mỗi 30 giây, tồn tại 5 giây</p>
-                <p>• 🐢 Rắn đuổi di chuyển <strong>CHẬM</strong> (0.5 giây/bước) - dễ né!</p>
-                <p>• 💡 <strong>Mẹo:</strong> Dùng bom nổ để <strong>tiêu diệt rắn đuổi</strong> 💥</p>
-                
-                <h3>🏆 CÁCH ĐỂ THẮNG:</h3>
-                <p>• Lấp đầy toàn bộ bảng 20x20 = <strong>400 ô</strong></p>
-                <p>• Đạt điểm tối đa: <strong>399 điểm</strong> (bắt đầu với 3 ô)</p>
-                <p>• Khi thắng sẽ xuất hiện dòng chữ <strong style="color:#ffd966">"VICTORY!"</strong> 🏆</p>
-                
-                <h3>💡 MẸO CHƠI HAY:</h3>
-                <p>• Luôn giữ khoảng trống xung quanh đầu rắn để tránh tự đâm</p>
-                <p>• Theo dõi đồng hồ đếm ngược để biết khi nào bom/rắn đuổi xuất hiện</p>
-                <p>• Ở chế độ khó, khi rắn đuổi xuất hiện, hãy chạy về phía bom sắp nổ</p>
-                <p>• Bom nổ có thể tiêu diệt rắn đuổi, tận dụng điều này!</p>
-                <p>• Khi rắn dài, hãy di chuyển theo vòng xoắn ốc để dễ quản lý</p>
+                <p>• Ăn táo 🍎 để tăng điểm và độ dài rắn</p>
+                <p>• Tránh đâm vào thân của chính mình</p>
+                <p>• 💣 Bom xuất hiện mỗi 10 giây, nổ sau 5 giây, bán kính 3x3 ô</p>
+                <p>• Trên mỗi quả bom có số đếm ngược thời gian còn lại</p>
+                <h3>🍃 CHẾ ĐỘ NGƯỜI BÌNH THƯỜNG:</h3>
+                <p>• Xuyên tường: Đi ra mép này, xuất hiện ở mép đối diện</p>
+                <p>• Không có rắn đuổi</p>
+                <h3>🔥 CHẾ ĐỘ NGƯỜI CHÂU Á:</h3>
+                <p>• Đụng tường = CHẾT</p>
+                <p>• Rắn đuổi xuất hiện mỗi 30 giây, tồn tại 5 giây</p>
+                <h3>🏆 CÁCH THẮNG:</h3>
+                <p>• Lấp đầy 400 ô = 399 điểm</p>
             </div>
         </details>
     </div>
 
-    <footer>💣 HÃY SỐNG SÓT THẬT CẨN THẬN | 📖 Bấm vào hướng dẫn để xem chi tiết</footer>
+    <footer>💣 HÃY SỐNG SÓT | 👆 VUỐT ĐỂ CHƠI</footer>
 </div>
 
 <script>
@@ -520,9 +628,18 @@
         const currentModeLabel = document.getElementById('currentModeLabel');
         const easyModeBtn = document.getElementById('easyModeBtn');
         const hardModeBtn = document.getElementById('hardModeBtn');
+        
+        const gameoverOverlay = document.getElementById('gameoverOverlay');
+        const gameoverScoreSpan = document.getElementById('gameoverScore');
+        const gameoverRestartBtn = document.getElementById('gameoverRestartBtn');
 
         const GRID_SIZE = 20;
-        const CELL_SIZE = canvas.width / GRID_SIZE;
+        
+        canvas.width = 700;
+        canvas.height = 700;
+        let CELL_SIZE = canvas.width / GRID_SIZE;
+        
+        let touchStartX = 0, touchStartY = 0;
 
         // Game variables
         let snake = [];
@@ -612,23 +729,16 @@
         
         function addExplosion(x, y) {
             explosions.push({
-                x: x,
-                y: y,
-                radius: 5,
-                maxRadius: CELL_SIZE * 3,
-                frame: 0,
-                maxFrames: 12
+                x: x, y: y, radius: 5, maxRadius: CELL_SIZE * 3,
+                frame: 0, maxFrames: 12
             });
         }
         
         function updateExplosions() {
             for(let i = explosions.length - 1; i >= 0; i--) {
-                const exp = explosions[i];
-                exp.frame++;
-                exp.radius = exp.maxRadius * (exp.frame / exp.maxFrames);
-                if(exp.frame >= exp.maxFrames) {
-                    explosions.splice(i, 1);
-                }
+                explosions[i].frame++;
+                explosions[i].radius = explosions[i].maxRadius * (explosions[i].frame / explosions[i].maxFrames);
+                if(explosions[i].frame >= explosions[i].maxFrames) explosions.splice(i, 1);
             }
         }
         
@@ -642,197 +752,100 @@
                 ctx.save();
                 ctx.shadowBlur = 15;
                 ctx.shadowColor = 'rgba(255, 100, 0, 0.8)';
-                
                 ctx.beginPath();
                 ctx.arc(x + CELL_SIZE/2, y + CELL_SIZE/2, radius, 0, Math.PI * 2);
-                const gradient = ctx.createRadialGradient(
-                    x + CELL_SIZE/2, y + CELL_SIZE/2, radius * 0.3,
-                    x + CELL_SIZE/2, y + CELL_SIZE/2, radius
-                );
+                const gradient = ctx.createRadialGradient(x + CELL_SIZE/2, y + CELL_SIZE/2, radius*0.3, x + CELL_SIZE/2, y + CELL_SIZE/2, radius);
                 gradient.addColorStop(0, `rgba(255, 200, 50, ${alpha})`);
                 gradient.addColorStop(0.5, `rgba(255, 100, 0, ${alpha * 0.8})`);
                 gradient.addColorStop(1, `rgba(200, 50, 0, 0)`);
                 ctx.fillStyle = gradient;
                 ctx.fill();
-                
-                for(let i = 0; i < 12; i++) {
-                    const angle = (i * 30 + exp.frame * 15) * Math.PI / 180;
-                    const dist = radius * 0.8;
-                    const x1 = x + CELL_SIZE/2 + Math.cos(angle) * dist;
-                    const y1 = y + CELL_SIZE/2 + Math.sin(angle) * dist;
-                    ctx.beginPath();
-                    ctx.moveTo(x + CELL_SIZE/2, y + CELL_SIZE/2);
-                    ctx.lineTo(x1, y1);
-                    ctx.strokeStyle = `rgba(255, 100, 0, ${alpha})`;
-                    ctx.lineWidth = 3;
-                    ctx.stroke();
-                }
-                
                 ctx.restore();
             }
         }
         
         function explodeBomb(bomb) {
-            const radius = 1;
-            const affectedCells = [];
-            
             addExplosion(bomb.x, bomb.y);
             shakeScreen();
-            
-            for(let dx = -radius; dx <= radius; dx++) {
-                for(let dy = -radius; dy <= radius; dy++) {
-                    let x = bomb.x + dx;
-                    let y = bomb.y + dy;
-                    if(x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE) {
-                        affectedCells.push({x, y});
-                        if(dx !== 0 || dy !== 0) {
-                            setTimeout(() => addExplosion(x, y), 50);
-                        }
-                    }
-                }
-            }
-            
-            setStatus("💥 BOOOOM! NỔ RỒI! 💥", false);
-            
             const head = snake[0];
-            const isHeadExploded = affectedCells.some(cell => cell.x === head.x && cell.y === head.y);
-            
+            const isHeadExploded = Math.abs(head.x - bomb.x) <= 1 && Math.abs(head.y - bomb.y) <= 1;
             if(isHeadExploded) {
                 setStatus("💥 TRÚNG BOM NỔ! GAME OVER! 💥", true);
                 gameOver();
                 return true;
             }
-            
-            if(enemyActive && enemySnake) {
-                const isEnemyExploded = affectedCells.some(cell => cell.x === enemySnake.x && cell.y === enemySnake.y);
-                if(isEnemyExploded) {
-                    setStatus("💥 BOM NỔ TIÊU DIỆT RẮN ĐUỔI! 💥", false);
-                    addExplosion(enemySnake.x, enemySnake.y);
-                    enemyActive = false;
-                    enemySnake = null;
-                    if(enemyMoveIntervalId) {
-                        clearInterval(enemyMoveIntervalId);
-                        enemyMoveIntervalId = null;
-                    }
-                }
+            if(enemyActive && enemySnake && Math.abs(enemySnake.x - bomb.x) <= 1 && Math.abs(enemySnake.y - bomb.y) <= 1) {
+                setStatus("💥 BOM NỔ TIÊU DIỆT RẮN ĐUỔI! 💥", false);
+                enemyActive = false;
+                enemySnake = null;
+                if(enemyMoveIntervalId) clearInterval(enemyMoveIntervalId);
             }
-            
             return false;
         }
         
         function spawnBomb() {
             if(!isGameRunning) return;
-            
-            const snakeSet = new Set(snake.map(seg => `${seg.x},${seg.y}`));
-            const bombSet = new Set(bombs.map(b => `${b.x},${b.y}`));
-            
+            const snakeSet = new Set(snake.map(s => `${s.x},${s.y}`));
             let freeCells = [];
             for(let i=0; i<GRID_SIZE; i++) {
                 for(let j=0; j<GRID_SIZE; j++) {
-                    if(!snakeSet.has(`${i},${j}`) && !bombSet.has(`${i},${j}`) && !(food.x === i && food.y === j)) {
-                        if(!enemyActive || (enemySnake && !(enemySnake.x === i && enemySnake.y === j))) {
-                            freeCells.push({x: i, y: j});
-                        }
+                    if(!snakeSet.has(`${i},${j}`) && !(food.x === i && food.y === j)) {
+                        freeCells.push({x:i, y:j});
                     }
                 }
             }
-            
             if(freeCells.length > 0) {
-                const randIndex = Math.floor(Math.random() * freeCells.length);
-                bombs.push({ 
-                    x: freeCells[randIndex].x, 
-                    y: freeCells[randIndex].y,
-                    spawnTime: Date.now()
-                });
-                setStatus(`💣 BOM XUẤT HIỆN! SẼ NỔ SAU 5 GIÂY!`, false);
+                const rand = Math.floor(Math.random() * freeCells.length);
+                bombs.push({ x: freeCells[rand].x, y: freeCells[rand].y, spawnTime: Date.now() });
             }
         }
         
         function checkBombExplosion() {
             const now = Date.now();
-            const bombsToExplode = bombs.filter(bomb => (now - bomb.spawnTime) >= 5000);
-            bombs = bombs.filter(bomb => (now - bomb.spawnTime) < 5000);
-            
-            for(let bomb of bombsToExplode) {
-                const gameEnded = explodeBomb(bomb);
-                if(gameEnded) return true;
-            }
+            const toExplode = bombs.filter(b => (now - b.spawnTime) >= 5000);
+            bombs = bombs.filter(b => (now - b.spawnTime) < 5000);
+            for(let b of toExplode) if(explodeBomb(b)) return true;
             return false;
         }
         
         function moveEnemySnake() {
             if(!enemyActive || !enemySnake || isEasyMode || !isGameRunning) return;
-            
             const head = snake[0];
-            let dx = head.x - enemySnake.x;
-            let dy = head.y - enemySnake.y;
-            
-            let newX = enemySnake.x;
-            let newY = enemySnake.y;
-            
-            if(Math.abs(dx) > Math.abs(dy)) {
-                if(dx > 0) newX++;
-                else newX--;
-            } else {
-                if(dy > 0) newY++;
-                else newY--;
-            }
-            
-            newX = Math.max(0, Math.min(GRID_SIZE - 1, newX));
-            newY = Math.max(0, Math.min(GRID_SIZE - 1, newY));
-            
+            let dx = head.x - enemySnake.x, dy = head.y - enemySnake.y;
+            let newX = enemySnake.x, newY = enemySnake.y;
+            if(Math.abs(dx) > Math.abs(dy)) newX += dx > 0 ? 1 : -1;
+            else newY += dy > 0 ? 1 : -1;
+            newX = Math.max(0, Math.min(GRID_SIZE-1, newX));
+            newY = Math.max(0, Math.min(GRID_SIZE-1, newY));
             enemySnake.x = newX;
             enemySnake.y = newY;
-            
-            if(enemySnake.x === head.x && enemySnake.y === head.y) {
-                setStatus("🐍 BỊ RẮN ĐUỔI TẤN CÔNG! GAME OVER! 🐍", true);
-                gameOver();
-            }
+            if(enemySnake.x === head.x && enemySnake.y === head.y) gameOver();
         }
         
         function startEnemyMovement() {
             if(enemyMoveIntervalId) clearInterval(enemyMoveIntervalId);
             if(isEasyMode) return;
-            
             enemyMoveIntervalId = setInterval(() => {
-                if(enemyActive && isGameRunning && !isEasyMode) {
-                    moveEnemySnake();
-                    drawGame();
-                }
+                if(enemyActive && isGameRunning && !isEasyMode) moveEnemySnake();
             }, ENEMY_MOVE_DELAY);
         }
         
         function spawnEnemySnake() {
             if(!isGameRunning || isEasyMode) return;
-            
-            const snakeSet = new Set(snake.map(seg => `${seg.x},${seg.y}`));
-            const bombSet = new Set(bombs.map(b => `${b.x},${b.y}`));
-            
+            const snakeSet = new Set(snake.map(s => `${s.x},${s.y}`));
             let freeCells = [];
             for(let i=0; i<GRID_SIZE; i++) {
                 for(let j=0; j<GRID_SIZE; j++) {
-                    if(!snakeSet.has(`${i},${j}`) && !bombSet.has(`${i},${j}`) && !(food.x === i && food.y === j)) {
-                        freeCells.push({x: i, y: j});
+                    if(!snakeSet.has(`${i},${j}`) && !(food.x === i && food.y === j)) {
+                        freeCells.push({x:i, y:j});
                     }
                 }
             }
-            
             if(freeCells.length > 0) {
-                const randIndex = Math.floor(Math.random() * freeCells.length);
+                const rand = Math.floor(Math.random() * freeCells.length);
                 enemyActive = true;
-                enemySnake = {
-                    x: freeCells[randIndex].x,
-                    y: freeCells[randIndex].y,
-                    spawnTime: Date.now()
-                };
-                setStatus("🐍 CẢNH BÁO! RẮN ĐUỔI XUẤT HIỆN! (DI CHUYỂN CHẬM) 🐍", true);
-                
-                setTimeout(() => {
-                    if(isGameRunning && enemyActive) {
-                        addExplosion(enemySnake.x, enemySnake.y);
-                    }
-                }, 100);
-                
+                enemySnake = { x: freeCells[rand].x, y: freeCells[rand].y, spawnTime: Date.now() };
+                setStatus("🐍 RẮN ĐUỔI XUẤT HIỆN! 🐍", true);
                 setTimeout(() => {
                     if(isGameRunning && !isEasyMode && enemyActive) {
                         enemyActive = false;
@@ -844,27 +857,21 @@
         }
         
         function checkEnemyCollision(head) {
-            if(enemyActive && enemySnake && head.x === enemySnake.x && head.y === enemySnake.y) {
-                setStatus("🐍 BỊ RẮN ĐUỔI TẤN CÔNG! GAME OVER! 🐍", true);
-                return true;
-            }
-            return false;
+            return enemyActive && enemySnake && head.x === enemySnake.x && head.y === enemySnake.y;
         }
         
         function checkBombCollision(head) {
-            return bombs.some(bomb => bomb.x === head.x && bomb.y === head.y);
+            return bombs.some(b => b.x === head.x && b.y === head.y);
         }
         
         function startBombCountdown() {
             if(bombTimerId) clearInterval(bombTimerId);
             bombCountdown = 10;
             updateTimerUI();
-            
             bombTimerId = setInterval(() => {
                 if(!isGameRunning) return;
                 bombCountdown--;
                 updateTimerUI();
-                
                 if(bombCountdown <= 0) {
                     spawnBomb();
                     bombCountdown = 10;
@@ -876,16 +883,12 @@
         function startEnemyCountdown() {
             if(enemyTimerId) clearInterval(enemyTimerId);
             if(isEasyMode) return;
-            
             enemyCountdown = 30;
             updateEnemyTimerUI();
-            
             enemyTimerId = setInterval(() => {
                 if(!isGameRunning || isEasyMode) return;
-                
                 enemyCountdown--;
                 updateEnemyTimerUI();
-                
                 if(enemyCountdown <= 0) {
                     spawnEnemySnake();
                     enemyCountdown = 30;
@@ -901,8 +904,9 @@
             if(bombTimerId) clearInterval(bombTimerId);
             if(enemyTimerId) clearInterval(enemyTimerId);
             if(enemyMoveIntervalId) clearInterval(enemyMoveIntervalId);
-            setStatus("💀 GAME OVER 💀 - Nhấn CHƠI LẠI", true);
-            shakeScreen();
+            gameoverScoreSpan.innerHTML = `🍎 Điểm của bạn: ${score}`;
+            gameoverOverlay.classList.add('show');
+            setStatus("💀 GAME OVER 💀", true);
         }
         
         function gameWin() {
@@ -916,56 +920,45 @@
         }
         
         function generateRandomFood() {
-            if(snake.length >= GRID_SIZE * GRID_SIZE) {
-                gameWin();
-                return false;
-            }
-            
-            const snakeSet = new Set(snake.map(seg => `${seg.x},${seg.y}`));
+            if(snake.length >= GRID_SIZE * GRID_SIZE) { gameWin(); return false; }
+            const snakeSet = new Set(snake.map(s => `${s.x},${s.y}`));
             const bombSet = new Set(bombs.map(b => `${b.x},${b.y}`));
-            
-            let freeCells = [];
+            let free = [];
             for(let i=0; i<GRID_SIZE; i++) {
                 for(let j=0; j<GRID_SIZE; j++) {
                     if(!snakeSet.has(`${i},${j}`) && !bombSet.has(`${i},${j}`)) {
                         if(!enemyActive || (enemySnake && !(enemySnake.x === i && enemySnake.y === j))) {
-                            freeCells.push({x: i, y: j});
+                            free.push({x:i, y:j});
                         }
                     }
                 }
             }
-            if(freeCells.length === 0) {
-                gameWin();
-                return false;
-            }
-            food = freeCells[Math.floor(Math.random() * freeCells.length)];
+            if(free.length === 0) { gameWin(); return false; }
+            food = free[Math.floor(Math.random() * free.length)];
             return true;
         }
         
         function handleWallTeleport(head) {
-            let newHead = { ...head };
-            if(newHead.x < 0) newHead.x = GRID_SIZE - 1;
-            if(newHead.x >= GRID_SIZE) newHead.x = 0;
-            if(newHead.y < 0) newHead.y = GRID_SIZE - 1;
-            if(newHead.y >= GRID_SIZE) newHead.y = 0;
-            return newHead;
+            let h = {...head};
+            if(h.x < 0) h.x = GRID_SIZE-1;
+            if(h.x >= GRID_SIZE) h.x = 0;
+            if(h.y < 0) h.y = GRID_SIZE-1;
+            if(h.y >= GRID_SIZE) h.y = 0;
+            return h;
         }
         
         function checkWallCollision(head) {
-            return (head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE);
+            return head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE;
         }
         
         function resetGame() {
+            gameoverOverlay.classList.remove('show');
             if(gameLoopId) clearInterval(gameLoopId);
             if(bombTimerId) clearInterval(bombTimerId);
             if(enemyTimerId) clearInterval(enemyTimerId);
             if(enemyMoveIntervalId) clearInterval(enemyMoveIntervalId);
             
-            snake = [
-                { x: 10, y: 10 },
-                { x: 9, y: 10 },
-                { x: 8, y: 10 }
-            ];
+            snake = [{x:10,y:10}, {x:9,y:10}, {x:8,y:10}];
             direction = 'right';
             nextDirection = 'right';
             score = 0;
@@ -981,13 +974,13 @@
             updateTimerUI();
             
             const snakeSet = new Set(snake.map(s => `${s.x},${s.y}`));
-            let freeSpots = [];
+            let free = [];
             for(let i=0; i<GRID_SIZE; i++) {
                 for(let j=0; j<GRID_SIZE; j++) {
-                    if(!snakeSet.has(`${i},${j}`)) freeSpots.push({x:i, y:j});
+                    if(!snakeSet.has(`${i},${j}`)) free.push({x:i, y:j});
                 }
             }
-            food = freeSpots.length > 0 ? freeSpots[Math.floor(Math.random() * freeSpots.length)] : { x: 5, y: 5 };
+            food = free.length ? free[Math.floor(Math.random() * free.length)] : {x:5,y:5};
             
             updateModeUI();
             drawGame();
@@ -999,105 +992,51 @@
         
         function gameTick() {
             if(!isGameRunning) return;
-            
             updateExplosions();
-            
-            const bombExploded = checkBombExplosion();
-            if(bombExploded) {
-                drawGame();
-                return;
-            }
-            
+            if(checkBombExplosion()) { drawGame(); return; }
             direction = nextDirection;
-            
-            let newHead = { ...snake[0] };
+            let newHead = {...snake[0]};
             switch(direction) {
-                case 'right': newHead.x += 1; break;
-                case 'left': newHead.x -= 1; break;
-                case 'up': newHead.y -= 1; break;
-                case 'down': newHead.y += 1; break;
+                case 'right': newHead.x++; break;
+                case 'left': newHead.x--; break;
+                case 'up': newHead.y--; break;
+                case 'down': newHead.y++; break;
             }
-            
-            if(isEasyMode) {
-                newHead = handleWallTeleport(newHead);
-            } else {
-                if(checkWallCollision(newHead)) {
-                    gameOver();
-                    drawGame();
-                    return;
-                }
-            }
-            
-            if(checkBombCollision(newHead)) {
-                setStatus("💣 ĐỤNG BOM CHƯA NỔ! GAME OVER! 💣", true);
-                addExplosion(newHead.x, newHead.y);
-                gameOver();
-                drawGame();
-                return;
-            }
-            
-            if(checkEnemyCollision(newHead)) {
-                gameOver();
-                drawGame();
-                return;
-            }
-            
-            const willEat = (newHead.x === food.x && newHead.y === food.y);
-            
+            if(isEasyMode) newHead = handleWallTeleport(newHead);
+            else if(checkWallCollision(newHead)) { gameOver(); drawGame(); return; }
+            if(checkBombCollision(newHead)) { gameOver(); drawGame(); return; }
+            if(checkEnemyCollision(newHead)) { gameOver(); drawGame(); return; }
+            const willEat = newHead.x === food.x && newHead.y === food.y;
             snake.unshift(newHead);
-            if(!willEat) {
-                snake.pop();
-            } else {
-                score++;
-                updateScoreUI();
-                generateRandomFood();
-            }
-            
-            const head = snake[0];
-            const collidesWithSelf = snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y);
-            if(collidesWithSelf) {
-                gameOver();
-                drawGame();
-                return;
-            }
-            
+            if(!willEat) snake.pop();
+            else { score++; updateScoreUI(); generateRandomFood(); }
+            if(snake.slice(1).some(s => s.x === snake[0].x && s.y === snake[0].y)) { gameOver(); drawGame(); return; }
             drawGame();
-            
-            if(!isGameRunning && gameLoopId) {
-                clearInterval(gameLoopId);
-                gameLoopId = null;
-            }
         }
         
         function drawGame() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            if(!isEasyMode) {
-                ctx.strokeStyle = '#ff6b6b';
-                ctx.lineWidth = 3;
-                ctx.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
-            } else {
-                ctx.strokeStyle = '#6fbf4c';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
-            }
+            ctx.strokeStyle = isEasyMode ? '#6fbf4c' : '#ff6b6b';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(2, 2, canvas.width-4, canvas.height-4);
             
             ctx.strokeStyle = '#2b5e42';
             ctx.lineWidth = 0.6;
-            for(let i = 0; i <= GRID_SIZE; i++) {
+            for(let i=0; i<=GRID_SIZE; i++) {
                 ctx.beginPath();
-                ctx.moveTo(i * CELL_SIZE, 0);
-                ctx.lineTo(i * CELL_SIZE, canvas.height);
+                ctx.moveTo(i*CELL_SIZE, 0);
+                ctx.lineTo(i*CELL_SIZE, canvas.height);
                 ctx.stroke();
-                ctx.moveTo(0, i * CELL_SIZE);
-                ctx.lineTo(canvas.width, i * CELL_SIZE);
+                ctx.moveTo(0, i*CELL_SIZE);
+                ctx.lineTo(canvas.width, i*CELL_SIZE);
                 ctx.stroke();
             }
             
-            bombs.forEach(bomb => {
-                const bx = bomb.x * CELL_SIZE;
-                const by = bomb.y * CELL_SIZE;
-                const timeLeft = Math.max(0, 5 - (Date.now() - bomb.spawnTime) / 1000);
+            // Vẽ bom CÓ HIỂN THỊ SỐ ĐẾM NGƯỢC
+            for(let b of bombs) {
+                let bx = b.x*CELL_SIZE, by = b.y*CELL_SIZE;
+                let timeLeft = Math.max(0, 5 - (Date.now() - b.spawnTime) / 1000);
                 
                 ctx.save();
                 ctx.shadowBlur = 8;
@@ -1116,40 +1055,31 @@
                 ctx.font = `bold ${CELL_SIZE * 0.35}px monospace`;
                 ctx.fillText(Math.ceil(timeLeft), bx + CELL_SIZE/2, by + CELL_SIZE/2 - 8);
                 ctx.restore();
-            });
-            
-            if(enemyActive && enemySnake && !isEasyMode) {
-                const ex = enemySnake.x * CELL_SIZE;
-                const ey = enemySnake.y * CELL_SIZE;
-                ctx.fillStyle = '#8b4513';
-                ctx.beginPath();
-                ctx.rect(ex + 2, ey + 2, CELL_SIZE - 4, CELL_SIZE - 4);
-                ctx.fill();
-                ctx.fillStyle = '#ffaa66';
-                ctx.font = `bold ${CELL_SIZE * 0.65}px monospace`;
-                ctx.fillText("🐍", ex + CELL_SIZE/2, ey + CELL_SIZE/2 + 5);
-                ctx.fillStyle = '#ffff00';
-                ctx.font = `${CELL_SIZE * 0.25}px monospace`;
-                ctx.fillText("🐢", ex + CELL_SIZE - 8, ey + 6);
             }
             
+            if(enemyActive && enemySnake && !isEasyMode) {
+                let ex = enemySnake.x*CELL_SIZE, ey = enemySnake.y*CELL_SIZE;
+                ctx.fillStyle = '#8b4513';
+                ctx.fillRect(ex+2, ey+2, CELL_SIZE-4, CELL_SIZE-4);
+                ctx.fillStyle = '#ffaa66';
+                ctx.font = `bold ${CELL_SIZE*0.55}px monospace`;
+                ctx.fillText("🐍", ex+CELL_SIZE/2-5, ey+CELL_SIZE/2+5);
+            }
+            
+            let fx = food.x*CELL_SIZE, fy = food.y*CELL_SIZE;
             ctx.fillStyle = '#ff5e5e';
             ctx.beginPath();
-            const fx = food.x * CELL_SIZE;
-            const fy = food.y * CELL_SIZE;
-            ctx.arc(fx + CELL_SIZE/2, fy + CELL_SIZE/2, CELL_SIZE/2 - 2, 0, Math.PI*2);
+            ctx.arc(fx+CELL_SIZE/2, fy+CELL_SIZE/2, CELL_SIZE/2-2, 0, Math.PI*2);
             ctx.fill();
             ctx.fillStyle = '#ffeeaa';
-            ctx.font = `${CELL_SIZE * 0.6}px monospace`;
-            ctx.fillText("🍎", fx + CELL_SIZE/2 - 17, fy + CELL_SIZE/2 + 6);
+            ctx.font = `${CELL_SIZE*0.5}px monospace`;
+            ctx.fillText("🍎", fx+CELL_SIZE/2-7, fy+CELL_SIZE/2+6);
             
             for(let i=0; i<snake.length; i++) {
-                const seg = snake[i];
-                const segX = seg.x * CELL_SIZE;
-                const segY = seg.y * CELL_SIZE;
-                const isHead = (i === 0);
+                let s = snake[i], sx = s.x*CELL_SIZE, sy = s.y*CELL_SIZE;
+                let isHead = (i === 0);
                 
-                const grad = ctx.createLinearGradient(segX, segY, segX+CELL_SIZE, segY+CELL_SIZE);
+                let grad = ctx.createLinearGradient(sx, sy, sx+CELL_SIZE, sy+CELL_SIZE);
                 if(isHead) {
                     grad.addColorStop(0, '#6fbf4c');
                     grad.addColorStop(1, '#3e9f2c');
@@ -1158,45 +1088,44 @@
                     grad.addColorStop(1, '#2a7a1f');
                 }
                 ctx.fillStyle = grad;
-                ctx.fillRect(segX+1, segY+1, CELL_SIZE-2, CELL_SIZE-2);
+                ctx.fillRect(sx+1, sy+1, CELL_SIZE-2, CELL_SIZE-2);
                 
                 if(isHead) {
                     ctx.fillStyle = 'white';
-                    const eyeOff = CELL_SIZE * 0.25;
-                    const eyeSize = CELL_SIZE * 0.12;
+                    let eyeOff = CELL_SIZE * 0.25;
+                    let eyeSize = CELL_SIZE * 0.12;
                     if(direction === 'right') {
-                        ctx.fillRect(segX+CELL_SIZE-eyeOff-2, segY+eyeOff, eyeSize, eyeSize);
-                        ctx.fillRect(segX+CELL_SIZE-eyeOff-2, segY+CELL_SIZE-eyeOff-eyeSize, eyeSize, eyeSize);
+                        ctx.fillRect(sx+CELL_SIZE-eyeOff-2, sy+eyeOff, eyeSize, eyeSize);
+                        ctx.fillRect(sx+CELL_SIZE-eyeOff-2, sy+CELL_SIZE-eyeOff-eyeSize, eyeSize, eyeSize);
                         ctx.fillStyle = '#010101';
-                        ctx.fillRect(segX+CELL_SIZE-eyeOff-1, segY+eyeOff+1, eyeSize-2, eyeSize-2);
-                        ctx.fillRect(segX+CELL_SIZE-eyeOff-1, segY+CELL_SIZE-eyeOff-eyeSize+1, eyeSize-2, eyeSize-2);
+                        ctx.fillRect(sx+CELL_SIZE-eyeOff-1, sy+eyeOff+1, eyeSize-2, eyeSize-2);
+                        ctx.fillRect(sx+CELL_SIZE-eyeOff-1, sy+CELL_SIZE-eyeOff-eyeSize+1, eyeSize-2, eyeSize-2);
                     } else if(direction === 'left') {
-                        ctx.fillRect(segX+eyeOff, segY+eyeOff, eyeSize, eyeSize);
-                        ctx.fillRect(segX+eyeOff, segY+CELL_SIZE-eyeOff-eyeSize, eyeSize, eyeSize);
+                        ctx.fillRect(sx+eyeOff, sy+eyeOff, eyeSize, eyeSize);
+                        ctx.fillRect(sx+eyeOff, sy+CELL_SIZE-eyeOff-eyeSize, eyeSize, eyeSize);
                         ctx.fillStyle = '#010101';
-                        ctx.fillRect(segX+eyeOff+1, segY+eyeOff+1, eyeSize-2, eyeSize-2);
-                        ctx.fillRect(segX+eyeOff+1, segY+CELL_SIZE-eyeOff-eyeSize+1, eyeSize-2, eyeSize-2);
+                        ctx.fillRect(sx+eyeOff+1, sy+eyeOff+1, eyeSize-2, eyeSize-2);
+                        ctx.fillRect(sx+eyeOff+1, sy+CELL_SIZE-eyeOff-eyeSize+1, eyeSize-2, eyeSize-2);
                     } else if(direction === 'up') {
-                        ctx.fillRect(segX+eyeOff, segY+eyeOff, eyeSize, eyeSize);
-                        ctx.fillRect(segX+CELL_SIZE-eyeOff-eyeSize, segY+eyeOff, eyeSize, eyeSize);
+                        ctx.fillRect(sx+eyeOff, sy+eyeOff, eyeSize, eyeSize);
+                        ctx.fillRect(sx+CELL_SIZE-eyeOff-eyeSize, sy+eyeOff, eyeSize, eyeSize);
                         ctx.fillStyle = '#010101';
-                        ctx.fillRect(segX+eyeOff+1, segY+eyeOff+1, eyeSize-2, eyeSize-2);
-                        ctx.fillRect(segX+CELL_SIZE-eyeOff-eyeSize+1, segY+eyeOff+1, eyeSize-2, eyeSize-2);
+                        ctx.fillRect(sx+eyeOff+1, sy+eyeOff+1, eyeSize-2, eyeSize-2);
+                        ctx.fillRect(sx+CELL_SIZE-eyeOff-eyeSize+1, sy+eyeOff+1, eyeSize-2, eyeSize-2);
                     } else {
-                        ctx.fillRect(segX+eyeOff, segY+CELL_SIZE-eyeOff-eyeSize, eyeSize, eyeSize);
-                        ctx.fillRect(segX+CELL_SIZE-eyeOff-eyeSize, segY+CELL_SIZE-eyeOff-eyeSize, eyeSize, eyeSize);
+                        ctx.fillRect(sx+eyeOff, sy+CELL_SIZE-eyeOff-eyeSize, eyeSize, eyeSize);
+                        ctx.fillRect(sx+CELL_SIZE-eyeOff-eyeSize, sy+CELL_SIZE-eyeOff-eyeSize, eyeSize, eyeSize);
                         ctx.fillStyle = '#010101';
-                        ctx.fillRect(segX+eyeOff+1, segY+CELL_SIZE-eyeOff-eyeSize+1, eyeSize-2, eyeSize-2);
-                        ctx.fillRect(segX+CELL_SIZE-eyeOff-eyeSize+1, segY+CELL_SIZE-eyeOff-eyeSize+1, eyeSize-2, eyeSize-2);
+                        ctx.fillRect(sx+eyeOff+1, sy+CELL_SIZE-eyeOff-eyeSize+1, eyeSize-2, eyeSize-2);
+                        ctx.fillRect(sx+CELL_SIZE-eyeOff-eyeSize+1, sy+CELL_SIZE-eyeOff-eyeSize+1, eyeSize-2, eyeSize-2);
                     }
                 } else {
                     ctx.fillStyle = '#6aa858';
                     ctx.beginPath();
-                    ctx.arc(segX+CELL_SIZE*0.5, segY+CELL_SIZE*0.5, 2, 0, Math.PI*2);
+                    ctx.arc(sx+CELL_SIZE*0.5, sy+CELL_SIZE*0.5, 2, 0, Math.PI*2);
                     ctx.fill();
                 }
             }
-            
             drawExplosions();
             
             if(!isGameRunning) {
@@ -1221,18 +1150,13 @@
             if((direction === 'right' && newDir === 'left') ||
                (direction === 'left' && newDir === 'right') ||
                (direction === 'up' && newDir === 'down') ||
-               (direction === 'down' && newDir === 'up')) {
-                return;
-            }
+               (direction === 'down' && newDir === 'up')) return;
             nextDirection = newDir;
         }
         
         function handleKey(e) {
             const key = e.key;
-            if (key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight' ||
-                key === 'w' || key === 'W' || key === 's' || key === 'S' || key === 'a' || key === 'A' || key === 'd' || key === 'D') {
-                e.preventDefault();
-            }
+            if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','W','s','S','a','A','d','D'].includes(key)) e.preventDefault();
             switch(key) {
                 case 'ArrowUp': case 'w': case 'W': changeDirection('up'); break;
                 case 'ArrowDown': case 's': case 'S': changeDirection('down'); break;
@@ -1241,18 +1165,28 @@
             }
         }
         
-        function setupMobileControls() {
-            document.querySelectorAll('.arrow-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const dir = btn.getAttribute('data-dir');
-                    if(dir === 'up') changeDirection('up');
-                    else if(dir === 'down') changeDirection('down');
-                    else if(dir === 'left') changeDirection('left');
-                    else if(dir === 'right') changeDirection('right');
-                    canvas.focus();
-                });
-            });
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }
+        
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            if(touchStartX === 0 && touchStartY === 0) return;
+            const touchEnd = e.changedTouches[0];
+            const deltaX = touchEnd.clientX - touchStartX;
+            const deltaY = touchEnd.clientY - touchStartY;
+            if(Math.abs(deltaX) < 15 && Math.abs(deltaY) < 15) return;
+            if(Math.abs(deltaX) > Math.abs(deltaY)) {
+                if(deltaX > 0) changeDirection('right');
+                else changeDirection('left');
+            } else {
+                if(deltaY > 0) changeDirection('down');
+                else changeDirection('up');
+            }
+            touchStartX = touchStartY = 0;
         }
         
         function setEasyMode() {
@@ -1274,21 +1208,20 @@
         
         function updateModeUI() {
             if(isEasyMode) {
-                currentModeLabel.innerHTML = " Dễ 🍃";
+                currentModeLabel.innerHTML = "NGƯỜI BÌNH THƯỜNG 🍃";
                 easyModeBtn.classList.add('mode-active');
                 hardModeBtn.classList.remove('mode-active');
                 enemyTimerBox.style.display = "none";
-                setStatus("🐍 CHẾ ĐỘ DỄ: HỌC SINH CÒN CHƠI ĐƯỢC");
+                setStatus("🐍 CHẾ ĐỘ NGƯỜI BÌNH THƯỜNG: Xuyên tường");
             } else {
-                currentModeLabel.innerHTML = "KHÓ🔥";
+                currentModeLabel.innerHTML = "NGƯỜI CHÂU Á 🔥";
                 hardModeBtn.classList.add('mode-active');
                 easyModeBtn.classList.remove('mode-active');
                 enemyTimerBox.style.display = "flex";
-                setStatus("🔥 CHẾ ĐỘ NGƯỜI CHÂU Á VỪA KHÓ VỪA ĐAU");
+                setStatus("🔥 CHẾ ĐỘ NGƯỜI CHÂU Á: Đụng tường chết + rắn đuổi");
             }
         }
         
-        // ========== MENU BẮT ĐẦU ==========
         const menuOverlay = document.getElementById('menuOverlay');
         const gameContainer = document.querySelector('.game-container');
         const menuEasy = document.getElementById('menuEasyBtn');
@@ -1316,8 +1249,8 @@
                     easyModeBtn.classList.add('mode-active');
                     hardModeBtn.classList.remove('mode-active');
                     enemyTimerBox.style.display = 'none';
-                    currentModeLabel.innerHTML = " Dễ 🍃";
-                    setStatus("🐍 CHẾ ĐỘ DỄ: HỌC SINH CÒN CHƠI ĐƯỢC");
+                    currentModeLabel.innerHTML = "NGƯỜI BÌNH THƯỜNG 🍃";
+                    setStatus("🐍 CHẾ ĐỘ NGƯỜI BÌNH THƯỜNG: Xuyên tường");
                 }
             } else {
                 if(isEasyMode) {
@@ -1325,8 +1258,8 @@
                     hardModeBtn.classList.add('mode-active');
                     easyModeBtn.classList.remove('mode-active');
                     enemyTimerBox.style.display = 'flex';
-                    currentModeLabel.innerHTML = "KHÓ🔥";
-                    setStatus("🔥 CHẾ ĐỘ NGƯỜI CHÂU Á VỪA KHÓ VỪA ĐAU");
+                    currentModeLabel.innerHTML = "NGƯỜI CHÂU Á 🔥";
+                    setStatus("🔥 CHẾ ĐỘ NGƯỜI CHÂU Á: Đụng tường chết + rắn đuổi");
                 }
             }
             
@@ -1358,18 +1291,18 @@
         
         startBtn.addEventListener('click', startGameFromMenu);
         if(menuBtn) menuBtn.addEventListener('click', backToMenu);
+        if(gameoverRestartBtn) gameoverRestartBtn.addEventListener('click', () => resetGame());
         
         updateMenuScores();
         
         window.addEventListener('load', () => {
             loadBestScore();
-            setupMobileControls();
+            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
             window.addEventListener('keydown', handleKey);
             document.getElementById('restartButton').addEventListener('click', () => resetGame());
             easyModeBtn.addEventListener('click', setEasyMode);
             hardModeBtn.addEventListener('click', setHardMode);
-            canvas.setAttribute('tabindex', '0');
-            canvas.style.outline = 'none';
             canvas.addEventListener('click', () => canvas.focus());
         });
         
